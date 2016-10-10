@@ -1,6 +1,6 @@
 {
   "name": "Deeper",
   "tagline": "Coming October 2016!",
-  "body": "## Welcome to Deeper!\r\nDeeper is a 2D Video Game Created by @OrionDark7 with [Python](https://python.org) & [Pygame](http://www.pygame.org). It is a game set in the Depths of an unknown world, where you can Build, Dig, and Explore freely. Version 0.1 is coming soon this month (October 2016), due to that, it is currently unavailable to download.\r\n\r\n## Screenshots\r\nYay! The fun stuff!\r\n\r\nA newly generated world:\r\n![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/Miners%20World.PNG)\r\n\r\nHere's the main menu:\r\n![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/mainMenu.PNG)\r\n\r\n\r\n",
+  "body": "## Welcome to Deeper!\r\nDeeper is a 2D Video Game Created by @OrionDark7 with [Python](https://python.org) & [Pygame](http://www.pygame.org). It is a game set in the Depths of an unknown world, where you can Build, Dig, and Explore freely. Version 0.1 is this week, so look out for it!\r\n\r\n## Screenshots\r\nYay! The fun stuff!\r\n\r\nA newly generated world:\r\n![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/Miners%20World.PNG)\r\n\r\nHere's the main menu:\r\n![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/mainMenu.PNG)\r\n\r\n\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
