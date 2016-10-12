@@ -1,4 +1,4 @@
-import pygame, random, datetime, pickle, time
+import pygame, random, pickle, time
 from pygame.color import THECOLORS
 blockImages = ["stone.png", "dirt.png", "CoalOre.png", "IronOre.png", "GoldOre.png", "Clay.png", "Bricks.png", "Mud.png", "grass.png", "lamp.png"]
 Background = pygame.image.load("Background.png")
