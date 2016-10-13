@@ -2,7 +2,7 @@ import pygame, random, pickle, time
 from pygame.color import THECOLORS
 blockImages = ["stone.png", "dirt.png", "CoalOre.png", "IronOre.png", "GoldOre.png", "Clay.png", "Bricks.png", "Mud.png", "grass.png", "lamp.png"]
 Background = pygame.image.load("Background.png")
-Logo = pygame.image.load("DeeperIcon.ico")
+Logo = pygame.image.load("DeeperIcon.jpg")
 ToolbarTile = pygame.image.load("Toolbar Tile.png")
 CheckboxChecked = pygame.image.load("CheckboxChecked.png")
 toolbarFile = []
@@ -421,7 +421,7 @@ version = "0.1"
 window = pygame.display.set_mode([480, 480])
 window.fill([128, 128, 128])
 pygame.display.set_caption("Deeper " + version)
-pygame.display.set_icon(pygame.image.load("DeeperIcon.ico"))
+pygame.display.set_icon(pygame.image.load("DeeperIcon.jpg"))
 Mouse = mouse((0, 0))
 mouseGrp = pygame.sprite.Group()
 world = pygame.sprite.Group()
