@@ -417,7 +417,7 @@ def Achievements(x, y):
     window.blit(achieve3, [x + 20, y + 50])
     
 pygame.init()
-version = "0.1"
+version = "0.1.1"
 window = pygame.display.set_mode([480, 480])
 window.fill([128, 128, 128])
 pygame.display.set_caption("Deeper " + version)
