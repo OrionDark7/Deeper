@@ -1,5 +1,4 @@
-# Deeper
-
-Deeper is a 2D Sandbox Video Game based Underground. You can build, dig, and explore.
-Download it at oriondark7.github.io/Deeper
+# Deeper 0.1.1
+## To download:
+You are currently viewing the github pages branch, to see the donwloadable files, go here: https:/github.com/OrionDark7/Deeper/tree/master
 
