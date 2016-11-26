@@ -3,7 +3,7 @@ from pygame.color import THECOLORS
 blockImages = ["stone.png", "dirt.png", "CoalOre.png", "IronOre.png", "GoldOre.png", "Clay.png", "Bricks.png", "Mud.png", "grass.png", "lamp.png"]
 Background = pygame.image.load("Background.png")
 Logo = pygame.image.load("DeeperIcon.jpg")
-ToolbarTile = pygame.image.load("Toolbar Tile.png")
+ToolbarTile = pygame.image.load("ToolbarTile.png")
 CheckboxChecked = pygame.image.load("CheckboxChecked.png")
 toolbarFile = []
 toolbarData = [0, 1, 2, 3, 4]
@@ -23,17 +23,11 @@ try:
 except:
     toolbarData = dumpToolbar()
 
-#Deeper - Version 0.1 Alpha:
+#Deeper - Version 0.1.2 Alpha:
 
 #Release Notes:
-# +Added Menu Screen.
-# +Added Toolbar. (Saves to Hard Drive every time you quit the game.)
-# +Added 2 World Types, Basic & Miners. (Miner's in my opinion is better, unless your a builder and just want an easy space to work with.)
-# +Sight Effects, place Lamp Blocks (The Yellow-Neon looking blocks.), to see places far away.
-# +10 Blocks to build with.
-# +Caves! Dig around and see if you can find one! (Miners World Only)
-# +Achievements!
-# +Added In-Game Menu. (Press E)
+# +Capable to run on Windows 32 bit and 64 bit!
+# +Changed font to Arial.
 
 class block(pygame.sprite.Sprite):
     def __init__(self, position, ID):
@@ -86,7 +80,7 @@ class block(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, player) and player.rect.bottom <= self.rect.top:
                 playerMove = self.rect.top + 5
                 playerWhere = 'bottom'
-            elif pygame.sprite.collide_rect(self, player) and player.rect.top <= self.rect.bottom and player.rect.top >= self.rect.centery:
+            elif pygame.sprite.collide_rect(self, player) and player.rect.top >= self.rect.bottom and player.rect.top >= self.rect.centery:
                 playerMove = self.rect.bottom - 5
                 playerWhere = 'top'
             elif pygame.sprite.collide_rect(self, player) and player.rect.right >= self.rect.left and player.rect.right <= self.rect.centerx and player.rect.centery >= self.rect.top and player.rect.centery <= self.rect.centery:
@@ -129,7 +123,7 @@ class button(pygame.sprite.Sprite):
     def __init__(self, text, location, basecolor, excess_trim):
         pygame.sprite.Sprite.__init__(self)
         self.text = str(text)
-        self.font = pygame.font.Font(None, 30)
+        self.font = pygame.font.Font("PixelFJVerdana12pt.TTF", 10)
         if excess_trim == None:
             self.excess_trim = int(0)
         else:
@@ -145,15 +139,16 @@ class button(pygame.sprite.Sprite):
         self.rect.centerx, self.rect.centery = location
         self.activated = False
         self.clicked = False
+        self.length = len(self.text) * 10 + 10 + self.excess_trim
         
     def display(self):
         global window
         window.blit(self.base, [self.rect.centerx - 5, self.rect.centery - 5])
-        window.blit(self.surface, [self.rect.centerx, self.rect.centery])
+        window.blit(self.surface, [self.rect.centerx + 5, self.rect.centery])
 
     def checkmouse(self):
         global Mouse, MouseTriggerZone
-        if MouseTriggerZone(self.rect.left, self.rect.top, self.rect.right, self.rect.bottom):
+        if MouseTriggerZone(self.rect.centerx, self.rect.top, self.rect.centerx + len(self.text) * 10 + 8 + self.excess_trim, self.rect.bottom):
             self.activated = True
         else:
             self.activated = False
@@ -213,7 +208,7 @@ class in_game_menu(pygame.sprite.Sprite):
         global window, blockImages, chosenBlock, toolbar 
         window.blit(self.dimSurf, [0, 0])
         window.blit(self.image, [self.rect.centerx, self.rect.centery])
-        MenuFont = pygame.font.Font(None, 20)
+        MenuFont = pygame.font.Font("PixelFJVerdana12pt.TTF", 5)
         toolbar(125, 125)
         Achievements(125, 200)
         MenuToolbarText = MenuFont.render("Press 0 to pick a new block.", 1, (0, 0, 0))
@@ -223,7 +218,7 @@ def menu():
     global window, menuButton, menuButton2, Logo
     background()
     window.blit(Logo, [100, 60])
-    textFont = pygame.font.Font(None, 50)
+    textFont = pygame.font.Font("PixelFJVerdana12pt.TTF", 15)
     textRender = textFont.render("Deeper", 1, (0, 0, 0))
     window.blit(textRender, [175, 75])
     menuButton.display()
@@ -238,7 +233,7 @@ def new_world():
     goButton.checkmouse()
     basicButton.checkmouse()
     basicButton.display()
-    nw_font = pygame.font.Font(None, 30)
+    nw_font = pygame.font.Font("PixelFJVerdana12pt.TTF", 10)
     if world_type:
         nw_surface = nw_font.render("Basic World", 1, (0, 0, 0))
     else:
@@ -259,11 +254,11 @@ def generate_world(Basic):
     Airspace = 0
     global player, players, playerSpawned, world, screen, achievements, cavePos
     cavePos.append(int(random.randint(1, 42)))
-    playerSpawnX = random.randint(0, 47)
+    playerSpawn = random.randint(0, 47), random.randint(0, 47)
     if bool(Basic):
         for y in range(48):
             for x in range(48):
-                if y == 0 and x == playerSpawnX:
+                if y == playerSpawn[1] and x == playerSpawn[0]:
                     player = Player([x * 10 + 2, y * 10 + 1])
                     playerSpawned = True
                     Id = None
@@ -291,10 +286,12 @@ def generate_world(Basic):
             for x in range(48):
                 if y in cavePos:
                     Airspace = int(random.randint(1, 10))
-                    if Airspace > 5:
+                    if Airspace > 5 and not cavePos[1] == y and not cavePos[2] == y and not cavePos[3] == y:
                         Id = None
-                    elif not cavePos[1] == y and not cavePos[2] == y and not cavePos[3] == y:
+                    elif Airspace <= 5 and not cavePos[1] == y and not cavePos[2] == y and not cavePos[3] == y:
                         Id = 0
+                    else:
+                        Id = None
                 else:
                     if y < 10:
                         Coal = int(random.randint(1, 10))
@@ -307,7 +304,7 @@ def generate_world(Basic):
                                     Id = 5
                                 else:
                                     Id = 1
-                        if y == 0 and x == playerSpawnX:
+                        if y == playerSpawn[1] and x == playerSpawn[0]:
                             player = Player([x * 10 + 2, y * 10 + 1])
                             playerSpawned = True
                             Id = None
@@ -397,7 +394,7 @@ def Achievements(x, y):
         window.blit(ToolbarTile, [x, y])
     else:
         window.blit(CheckboxChecked, [x, y])
-    achievementFont = pygame.font.Font(None, 20)
+    achievementFont = pygame.font.Font("PixelFJVerdana12pt.TTF", 5)
     achieve1 = achievementFont.render("Beginning - Start a World", 1, (0, 0, 0))
     window.blit(achieve1, [x + 20, y])
     if world_type == False:
@@ -417,7 +414,7 @@ def Achievements(x, y):
     window.blit(achieve3, [x + 20, y + 50])
     
 pygame.init()
-version = "0.1.1"
+version = "0.1.3"
 window = pygame.display.set_mode([480, 480])
 window.fill([128, 128, 128])
 pygame.display.set_caption("Deeper " + version)
@@ -433,7 +430,7 @@ mouseGrp.add(Mouse)
 menuButton = button("Start", [200, 200], "gray", None)
 exitButton = button("Exit", [205, 250], "red", None)
 goButton = button("Go!", [200, 200], "green", 5)
-basicButton = button("Change World Type", [125, 275], "gray", 26)
+basicButton = button("Change World Type", [125, 275], "gray", 10)
 gamemenu = in_game_menu()
 running = True
 GameMenu = False
