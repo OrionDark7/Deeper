@@ -139,7 +139,7 @@ class button(pygame.sprite.Sprite):
         self.rect.centerx, self.rect.centery = location
         self.activated = False
         self.clicked = False
-        self.length = len(self.text) * 10 + 10 + self.excess_trim
+        self.length = len(self.text) * 10 + 5 + self.excess_trim
         
     def display(self):
         global window
@@ -148,7 +148,7 @@ class button(pygame.sprite.Sprite):
 
     def checkmouse(self):
         global Mouse, MouseTriggerZone
-        if MouseTriggerZone(self.rect.centerx, self.rect.top, self.rect.centerx + len(self.text) * 10 + 8 + self.excess_trim, self.rect.bottom):
+        if MouseTriggerZone(self.rect.centerx, self.rect.top, self.rect.centerx + self.length, self.rect.bottom):
             self.activated = True
         else:
             self.activated = False
@@ -254,11 +254,11 @@ def generate_world(Basic):
     Airspace = 0
     global player, players, playerSpawned, world, screen, achievements, cavePos
     cavePos.append(int(random.randint(1, 42)))
-    playerSpawn = random.randint(0, 47), random.randint(0, 47)
+    playerSpawnX = int(random.randint(0, 47))
     if bool(Basic):
         for y in range(48):
             for x in range(48):
-                if y == playerSpawn[1] and x == playerSpawn[0]:
+                if y == 0 and x == playerSpawnX:
                     player = Player([x * 10 + 2, y * 10 + 1])
                     playerSpawned = True
                     Id = None
@@ -304,7 +304,7 @@ def generate_world(Basic):
                                     Id = 5
                                 else:
                                     Id = 1
-                        if y == playerSpawn[1] and x == playerSpawn[0]:
+                        if y == 0 and x == playerSpawnX:
                             player = Player([x * 10 + 2, y * 10 + 1])
                             playerSpawned = True
                             Id = None
@@ -414,7 +414,7 @@ def Achievements(x, y):
     window.blit(achieve3, [x + 20, y + 50])
     
 pygame.init()
-version = "0.1.3"
+version = "0.1.4"
 window = pygame.display.set_mode([480, 480])
 window.fill([128, 128, 128])
 pygame.display.set_caption("Deeper " + version)
@@ -449,6 +449,7 @@ achievements = [None, None, None]
 toolbarFile = open("toolbar.dat", "w")
 mouseevent = 0
 blocksMined = 0
+pygame.key.set_repeat(1, 50)
 
 print "Deeper v" + version +" Alpha"
 print "We are in Alpha Testing!"
