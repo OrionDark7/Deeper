@@ -1,0 +1,8 @@
+title: Deeper
+description: Download Version 0.2.1 Today!
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-hacker
+
+gems:
+  - jekyll-mentions
