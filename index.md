@@ -1,7 +1,7 @@
 ## Welcome to Deeper!
 Deeper is a 2D Video Game Created by @OrionDark7 with [Python](https://python.org) & [Pygame](http://www.pygame.org). It is a game set in the Depths of an unknown world, where you can Build, Dig, and Explore freely. Version 0.2.1 is Avalible for Download for [Windows](https://oriondark7.github.io/DeeperForWindows), but has no set release date for macOS and OS X. The Python source code for 0.2 can also be downloaded here.
 
-##Downloads
+## Downloads
 ### [Windows Installer](https://github.com/OrionDark7/DeeperForWindows/zipball/master)
 ### Note: To run Deeper, you need to be running at least Windows XP or newer.
 ### [Try Deeper Build 3002!](https://github.com/OrionDark7/Deeper/zipball/build3000)
