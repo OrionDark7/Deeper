@@ -10,14 +10,12 @@ Deeper is a 2D Video Game Created by @OrionDark7 with [Python](https://python.or
 ## Screenshots
 Yay! The fun stuff!
 
-(Note: These pictures are really old, I will try to get some new ones up as soon as possible.)
+A pre-genearted cave in the world:
 
-A newly generated world:
-
-![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/Miners%20World.PNG)
+![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/cave.PNG)
 
 Here's the main menu:
 
-![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/mainMenu.PNG)
+![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/mainmenu.PNG)
 
 
