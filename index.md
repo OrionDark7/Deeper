@@ -12,10 +12,10 @@ Yay! The fun stuff!
 
 A pre-genearted cave in the world:
 
-![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/cave.PNG)
+![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/cave.png)
 
 Here's the main menu:
 
-![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/mainmenu.PNG)
+![](https://raw.githubusercontent.com/OrionDark7/Deeper/gh-pages/images/mainmenu.png)
 
 
