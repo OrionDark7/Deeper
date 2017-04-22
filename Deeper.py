@@ -4,7 +4,7 @@ blockImages = ["stone.png", "dirt.png", "coalore.png", "ironore.png", "goldore.p
 itemImages = ["Pickaxe.png"]
 Background = pygame.image.load("Background.png")
 Logo = pygame.image.load("DeeperIcon.jpg")
-ToolbarTile = pygame.image.load("Toolbar Tile.png")
+ToolbarTile = pygame.image.load("ToolbarTile.png")
 CheckboxChecked = pygame.image.load("CheckboxChecked.png")
 toolbarFile = []
 cavePos = []
@@ -391,7 +391,7 @@ class pcScreen(pygame.sprite.Sprite):
         self.buildX = pygame.image.load("BuildX.png")
         self.HomeButton = pygame.image.load("HomeButton.png")
         self.eraseButton = pygame.image.load("EraseButton.png")
-        self.optionsButton = pygame.image.load("options.png")
+        self.optionsButton = pygame.image.load("Options.png")
         self.upButton = pygame.image.load("UpButton.png")
         self.downButton = pygame.image.load("DownButton.png")
         self.buildXdata = list([["Stone.png", "Stone.png", "Stone.png", "Stone.png", "Stone.png"], ["Stone.png", "Stone.png", "Stone.png", "Stone.png", "Stone.png"], ["Stone.png", "Stone.png", "LegacyPC.png", "Stone.png", "Stone.png"], ["Stone.png", "Stone.png", "Stone.png", "Stone.png", "Stone.png"], ["Stone.png", "Stone.png", "Stone.png", "Stone.png", "Stone.png"]])
