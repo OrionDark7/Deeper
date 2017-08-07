@@ -1,1 +1,3 @@
 *.py binary
+*.deep binary
+*.dat binary
