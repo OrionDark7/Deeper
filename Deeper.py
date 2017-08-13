@@ -1,4 +1,4 @@
-import pygame, random, datetime, pickle, time, os
+import pygame, random, datetime, pickle, time, os, webbrowser
 from pygame.color import THECOLORS
 blockImages = ["stone.png", "dirt.png", "coalore.png", "ironore.png", "goldore.png", "clay.png", "bricks.png", "mud.png", "grass.png", "lamp.png", "legacypc.png", "craftshelf.png", "crate.png"]
 itemImages = ["Pickaxe.png"]
@@ -6,11 +6,12 @@ Background = pygame.image.load("Background.png")
 Logo = pygame.image.load("DeeperIcon.jpg")
 ToolbarTile = pygame.image.load("ToolbarTile.png")
 CheckboxChecked = pygame.image.load("CheckboxChecked.png")
+OrionDark7 = pygame.image.load("OrionDark7.png")
 toolbarFile = []
 cavePos = []
 crafting = False
 
-#Deeper - v0.3:
+#Deeper - v0.3.1:
 #Release Notes:
 # Multiple World Saving System! you can find your worlds in the ./worlds folder.
 # Major GUI Improvements.
@@ -555,6 +556,18 @@ class pcScreen(pygame.sprite.Sprite):
             isclicked = False
         return isclicked
 
+def loading():
+    global window
+    window.fill((0, 0, 0))
+    window.blit(OrionDark7, [221, 221])
+    font = pygame.font.Font("PixelFJVerdana12pt.TTF", 10)
+    urlfont = pygame.font.Font("PixelFJVerdana12pt.TTF", 5)
+    credit = font.render("Built by OrionDark7", 1, (255, 255, 255))
+    url = urlfont.render("http://oriondark7.com", 1, (255, 255, 255))
+    window.blit(credit, [160, 265])
+    window.blit(url, [190, 290])
+    pygame.display.flip()
+
 def menu():
     global window, Logo
     background()
@@ -565,6 +578,8 @@ def menu():
     menuButton.update(False)
     exitButton.update(False)
     helpButton.update(False)
+    webButton.update(False)
+    window.blit(OrionDark7, [2, 440])
     pygame.display.flip()
 
 def help_menu():
@@ -899,9 +914,8 @@ def Achievements(x, y):
     window.blit(achieve3, [x + 20, y + 50])
 
 pygame.init()
-version = "0.3"
+version = "0.3.1"
 window = pygame.display.set_mode([480, 480])
-window.fill([128, 128, 128])
 pygame.display.set_caption("Deeper " + version)
 pygame.display.set_icon(pygame.image.load("DeeperIcon.jpg"))
 Mouse = mouse((0, 0))
@@ -914,6 +928,7 @@ lighting = pygame.sprite.Group()
 blocklighting = pygame.sprite.Group()
 mouseGrp.add(Mouse)
 gamemenu = in_game_menu()
+webButton = button("Website", [400, 450], "gray", 0)
 menuButton = button("Start", [200, 200], "gray", -5)
 helpButton = button("Help", [202, 250], "gray", 0)
 exitButton = button("Exit", [205, 300], "red", -5)
@@ -937,7 +952,7 @@ playerSpawned = False
 clicked = False
 pcOn = False
 player = None
-screen = 'menu'
+screen = 'loading'
 pcMenu = "home"
 yVelocity = 1
 playerMove = 0
@@ -982,6 +997,8 @@ while running:
                     helpButton.click()
                     exitButton.checkmouse()
                     exitButton.click()
+                    webButton.checkmouse()
+                    webButton.click()
                     if menuButton.clicked:
                         screen = 'choose_world'
                         menuButton.clicked = False
@@ -991,6 +1008,9 @@ while running:
                     elif exitButton.clicked:
                         running = False
                         exitButton.clicked = False
+                    elif webButton.clicked:
+                        web = webbrowser.open('http://oriondark7.com/deeper')
+                        webButton.clicked = False
                 elif screen == 'choose_world':
                     loadButton.checkmouse()
                     loadButton.click()
@@ -1153,6 +1173,10 @@ while running:
     if screen == 'menu':
         menu()
         window.blit(pygame.image.load("cursor.png"), [Mouse.rect.centerx, Mouse.rect.centery])
+    elif screen == 'loading':
+        loading()
+        time.sleep(3)
+        screen = 'menu'
     elif screen == 'help':
         help_menu()
         window.blit(pygame.image.load("cursor.png"), [Mouse.rect.centerx, Mouse.rect.centery])
