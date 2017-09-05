@@ -11,14 +11,11 @@ toolbarFile = []
 cavePos = []
 crafting = False
 
-#Deeper - v0.3.1:
+#Deeper - v0.3.2:
+#Copyright 2017 Orion Williams, MIT License, see LICENSE.txt
 #Release Notes:
-# Multiple World Saving System! you can find your worlds in the ./worlds folder.
-# Major GUI Improvements.
-# Added a new menu, which has the value of 'choose_world'.
-# New menu allows you to choose either 'Load World' or 'New World'.
-# Re-created new world menu.
-# Added load world menu.
+# Fixed the thing where it crashes automatically when you load the game.
+# Program now treats all data files (.deep and .dat files) as binaries.
 
 class block(pygame.sprite.Sprite):
     def __init__(self, position, ID):
@@ -220,13 +217,13 @@ toolbarOld = []
 
 def loadToolbar():
     global toolbarFile, toolbarOld
-    toolbarFile = open("toolbar.dat", "r")
+    toolbarFile = open("toolbar.dat", "rb")
     toolbarData = pickle.load(toolbarFile)
     toolbarOld = toolbarData
     toolbarFile.close()
 def dumpToolbar():
     global item, toolbarOld
-    toolbarFile = open("toolbar.dat", "w")
+    toolbarFile = open("toolbar.dat", "wb")
     items = [item(0, False, 1), item(11, True, 1), None, None, None]
     toolbarOld = items
     pickle.dump(items, toolbarFile)
@@ -250,12 +247,17 @@ def loadWorlds():
 worlds = loadWorlds()
 
 try:
-    tutorialFile = open("./worlds/tutorial.deep", "r")
+    tutorialFile = open("./worlds/tutorial.deep", "rb")
 except:
     tutorialAccess = False
 
+tutorialError = False
+
 if tutorialAccess:
-    tutorialData = pickle.load(tutorialFile)
+    try:
+        tutorialData = pickle.load(tutorialFile)
+    except:
+        tutorialError = True
     tutorialFile.close()
 
 class LightingBlock(pygame.sprite.Sprite):
@@ -914,7 +916,7 @@ def Achievements(x, y):
     window.blit(achieve3, [x + 20, y + 50])
 
 pygame.init()
-version = "0.3.1"
+version = "0.3.2"
 window = pygame.display.set_mode([480, 480])
 pygame.display.set_caption("Deeper " + version)
 pygame.display.set_icon(pygame.image.load("DeeperIcon.jpg"))
@@ -970,7 +972,7 @@ worldbox = textbox(301)
 
 tutorial = ["Welcome to Deeper! Click Next to continue.", "Deeper is a game about exploring deeper, mining, and building.", "To start, try moving by pressing the A & D keys or arrow keys.", "See that? The little green guy moved! To make him jump, press the spacebar.", "Next, lets try mining. To mine a block, click it. It will be added to your inventory.", "To open your inventory, press E.", "When you are in your inventory, you can view your items, and achievements.", "In the top left corner are your items, to switch current items, just click it.", "You can also place blocks by clicking on any empty space.", "You can also interact wtih some blocks by right clicking them.", "That's about everything you need to know, you are about to exit the tutorial.", "If you have any questions, go to the help menu or contact @OrionDark7 on GitHub.", "Have fun!!!"]
 craftingRecipes = [craftingRecipe(item(10, True, 1), [item(9, True, 4), item(3, True, 5)]), craftingRecipe(item(9, True, 4), [item(2, True, 3), item(4, True, 3)]), craftingRecipe(item(6, True, 4), [item(5, True, 4)]), craftingRecipe(item(8, True, 4), [item(1, True, 4)])]
-toolbarFile = open("toolbar.dat", "w")
+toolbarFile = open("toolbar.dat", "wb")
 mouseevent = 0
 blocksMined = 0
 
@@ -1050,7 +1052,7 @@ while running:
                     if minersButton.clicked:
                         world_type = False
                         minersButton.clicked = False
-                    if tutorialButton.clicked:
+                    if tutorialButton.clicked and not tutorialError:
                         world_type = "tutorial"
                         tutorialButton.clicked = False
                     if backButton.clicked:
@@ -1063,7 +1065,7 @@ while running:
                     backButton.click()
                     if goButton2.clicked:
                         if worldbox.keys+".deep" in worlds:
-                            worldFile = open("./worlds/"+worldbox.keys+".deep", "r")
+                            worldFile = open("./worlds/"+worldbox.keys+".deep", "rb")
                             worldData = pickle.load(worldFile)
                             worldFile.close()
                             goButton.clicked = False
@@ -1228,7 +1230,7 @@ while running:
     playerMoveX = 0
     clicked = False
 if screen == "in_game":
-    saveWorldFile = open("./worlds/"+name+".deep", "w")
+    saveWorldFile = open("./worlds/"+name+".deep", "wb")
     worldDataNew = []
     for i in allBlocks:
         worldDataNew.append(i.transfer())
