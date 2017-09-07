@@ -11,11 +11,10 @@ toolbarFile = []
 cavePos = []
 crafting = False
 
-#Deeper - v0.3.2:
+#Deeper - v0.3.3:
 #Copyright 2017 Orion Williams, MIT License, see LICENSE.txt
 #Release Notes:
-# Fixed the thing where it crashes automatically when you load the game.
-# Program now treats all data files (.deep and .dat files) as binaries.
+# Fixed Tutorial World, so now you can actually play it.
 
 class block(pygame.sprite.Sprite):
     def __init__(self, position, ID):
@@ -916,7 +915,7 @@ def Achievements(x, y):
     window.blit(achieve3, [x + 20, y + 50])
 
 pygame.init()
-version = "0.3.2"
+version = "0.3.3"
 window = pygame.display.set_mode([480, 480])
 pygame.display.set_caption("Deeper " + version)
 pygame.display.set_icon(pygame.image.load("DeeperIcon.jpg"))
