@@ -1,7 +1,7 @@
 import pygame, random, datetime, pickle, time, os, webbrowser
 from pygame.color import THECOLORS
-blockImages = ["stone.png", "dirt.png", "coalore.png", "ironore.png", "goldore.png", "clay.png", "bricks.png", "mud.png", "grass.png", "lamp.png", "legacypc.png", "craftshelf.png", "crate.png"]
-itemImages = ["Pickaxe.png"]
+blockImages = ["stone.png", "dirt.png", "coalore.png", "ironore.png", "goldore.png", "clay.png", "bricks.png", "mud.png", "grass.png", "lamp.png", "legacypc.png", "craftshelf.png", "crate.png", "magma.png"]
+itemImages = ["Pickaxe.png", "Iron Pickaxe.png", "Gold Pickaxe.png"]
 Background = pygame.image.load("Background.png")
 Logo = pygame.image.load("DeeperIcon.jpg")
 ToolbarTile = pygame.image.load("ToolbarTile.png")
@@ -11,10 +11,12 @@ toolbarFile = []
 cavePos = []
 crafting = False
 
-#Deeper - v0.3.3:
+#Deeper - Codename Fireball Build 4002:
 #Copyright 2017 Orion Williams, MIT License, see LICENSE.txt
 #Release Notes:
-# Fixed Tutorial World, so now you can actually play it.
+# Added Magma Blocks.
+# Added Iron and Gold Pickaxes.
+# Added Recipes in the crafting menu, so it's easier to craft now.
 
 class block(pygame.sprite.Sprite):
     def __init__(self, position, ID):
@@ -57,6 +59,10 @@ class block(pygame.sprite.Sprite):
             if not Toolbar[chosenBlock] == None:
                 if Toolbar[chosenBlock].image == 'Pickaxe.png' and random.randint(1, 10) > 5:
                     Toolbar[Toolbar.index(None)] = item(self.id, True, 2)
+                elif Toolbar[chosenBlock].image == 'Iron Pickaxe.png' and random.randint(1, 10) > 4:
+                    Toolbar[Toolbar.index(None)] = item(self.id, True, 3)
+                elif Toolbar[chosenBlock].image == 'Gold Pickaxe.png' and random.randint(1, 10) > 3:
+                    Toolbar[Toolbar.index(None)] = item(self.id, True, 4)
                 else:
                     Toolbar[Toolbar.index(None)] = item(self.id, True, 1)
             else:
@@ -405,7 +411,30 @@ class in_game_menu(pygame.sprite.Sprite):
         craftClose.display()
         craftButton.checkmouse()
         craftButton.display()
+        craft = craftingRecipes[currentCraft]
         window.blit(pygame.image.load(craftingRecipes[currentCraft].item.image), [215, 160])
+        window.blit(pygame.image.load(craft.item.image), [125, 200])
+        titleText = MenuFont.render("How to craft "+str(list(craft.item.image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+        window.blit(titleText, [140, 199])
+        window.blit(pygame.image.load(craft.parts[0].image), [125, 220])
+        Text = MenuFont.render(str(craft.parts[0].quantity)+" "+str(list(craft.parts[0].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+        window.blit(Text, [140, 219])
+        if len(craft.parts) == 2:
+           window.blit(pygame.image.load(craft.parts[1].image), [125, 240])
+           Text = MenuFont.render(str(craft.parts[1].quantity)+" "+str(list(craft.parts[1].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+           window.blit(Text, [140, 239])
+        if len(craft.parts) == 3:
+            window.blit(pygame.image.load(craft.parts[2].image), [125, 260])
+            Text = MenuFont.render(str(craft.parts[2].quantity)+" "+str(list(craft.parts[2].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+            window.blit(Text, [140, 259])
+        if len(craft.parts) == 4:
+            window.blit(pygame.image.load(craft.parts[3].image), [125, 280])
+            Text = MenuFont.render(str(craft.parts[3].quantity)+" "+str(list(craft.parts[3].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+            window.blit(Text, [140, 279])
+        if len(craft.parts) == 5:
+            window.blit(pygame.image.load(craft.parts[4].image), [125, 300])
+            Text = MenuFont.render(str(craft.parts[4].quantity)+" "+str(list(craft.parts[4].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+            window.blit(Text, [140, 299])
 
 class textbox(pygame.sprite.Sprite):
     def __init__(self, width):
@@ -680,6 +709,7 @@ def generate_world(Basic):
     Coal = 0
     Iron = 0
     Gold = 0
+    Magma = 0
     Airspace = 0
     Crate = 0
     global player, players, playerSpawned, world, screen, achievements, cavePos, Toolbar, toolbarData, worldData, blocklighting
@@ -784,7 +814,7 @@ def generate_world(Basic):
                                 Id = 2
                             else:
                                 Id = 0
-                    elif y > 30:
+                    elif y > 30 and y < 38:
                         Iron = int(random.randint(1, 10))
                         Gold = int(random.randint(1, 10))
                         Coal = int(random.randint(1, 20))
@@ -798,6 +828,12 @@ def generate_world(Basic):
                                     Id = 2
                                 else:
                                     Id = 0
+                    elif y > 38:
+                        Magma = int(random.randint(1, 10))
+                        if Magma > 3:
+                            Id = 13
+                        else:
+                            Id = 0
                     else:
                         Coal = int(random.randint(1, 10))
                         if Coal == 10:
@@ -915,7 +951,7 @@ def Achievements(x, y):
     window.blit(achieve3, [x + 20, y + 50])
 
 pygame.init()
-version = "0.3.3"
+version = "Build 4002"
 window = pygame.display.set_mode([480, 480])
 pygame.display.set_caption("Deeper " + version)
 pygame.display.set_icon(pygame.image.load("DeeperIcon.jpg"))
@@ -970,7 +1006,7 @@ box.keys = 'new world'
 worldbox = textbox(301)
 
 tutorial = ["Welcome to Deeper! Click Next to continue.", "Deeper is a game about exploring deeper, mining, and building.", "To start, try moving by pressing the A & D keys or arrow keys.", "See that? The little green guy moved! To make him jump, press the spacebar.", "Next, lets try mining. To mine a block, click it. It will be added to your inventory.", "To open your inventory, press E.", "When you are in your inventory, you can view your items, and achievements.", "In the top left corner are your items, to switch current items, just click it.", "You can also place blocks by clicking on any empty space.", "You can also interact wtih some blocks by right clicking them.", "That's about everything you need to know, you are about to exit the tutorial.", "If you have any questions, go to the help menu or contact @OrionDark7 on GitHub.", "Have fun!!!"]
-craftingRecipes = [craftingRecipe(item(10, True, 1), [item(9, True, 4), item(3, True, 5)]), craftingRecipe(item(9, True, 4), [item(2, True, 3), item(4, True, 3)]), craftingRecipe(item(6, True, 4), [item(5, True, 4)]), craftingRecipe(item(8, True, 4), [item(1, True, 4)])]
+craftingRecipes = [craftingRecipe(item(10, True, 1), [item(9, True, 4), item(3, True, 5)]), craftingRecipe(item(9, True, 4), [item(2, True, 3), item(4, True, 3)]), craftingRecipe(item(6, True, 4), [item(5, True, 4)]), craftingRecipe(item(8, True, 4), [item(1, True, 4)]), craftingRecipe(item(1, False, 1), [item(0, False, 1), item(3, True, 3)]), craftingRecipe(item(2, False, 1), [item(1, False, 1), item(4, True, 3)])]
 toolbarFile = open("toolbar.dat", "wb")
 mouseevent = 0
 blocksMined = 0
