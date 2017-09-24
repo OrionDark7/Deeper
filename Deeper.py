@@ -12,7 +12,7 @@ toolbarFile = []
 cavePos = []
 crafting = False
 
-#Deeper - Codename Fireball Build 4005:
+#Deeper - Codename Fireball Build 4006:
 #Copyright 2017 Orion Williams, MIT License, see LICENSE.txt
 #Release Notes:
 # Remade the Main Menu in a more Stylish Manner.
