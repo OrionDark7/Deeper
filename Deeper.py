@@ -1,20 +1,31 @@
 import pygame, random, datetime, pickle, time, os, webbrowser
 from pygame.color import THECOLORS
-blockImages = ["stone.png", "dirt.png", "coalore.png", "ironore.png", "goldore.png", "clay.png", "bricks.png", "mud.png", "grass.png", "lamp.png", "legacypc.png", "craftshelf.png", "crate.png"]
-itemImages = ["Pickaxe.png"]
+blockImages = ["stone.png", "dirt.png", "coalore.png", "ironore.png", "goldore.png", "clay.png", "bricks.png", "mud.png", "grass.png", "lamp.png", "legacypc.png", "craftshelf.png", "crate.png", "magma.png"]
+itemImages = ["Pickaxe.png", "Iron Pickaxe.png", "Gold Pickaxe.png", "Lava Pickaxe.png"]
 Background = pygame.image.load("Background.png")
 Logo = pygame.image.load("DeeperIcon.jpg")
 ToolbarTile = pygame.image.load("ToolbarTile.png")
 CheckboxChecked = pygame.image.load("CheckboxChecked.png")
 OrionDark7 = pygame.image.load("OrionDark7.png")
+mostRecentWorld = open("recent.txt", "rb")
+mostRecent = mostRecentWorld.readline()
+mostRecentWorld.close()
+screenshot = "./screenshots/screenshot"+str(random.randint(1,3))+".png"
 toolbarFile = []
 cavePos = []
 crafting = False
 
-#Deeper - v0.3.3:
-#Copyright 2017 Orion Williams, MIT License, see LICENSE.txt
+#Deeper - Version 0.4 Codename Fireball:
+#Copyright 2018 Orion Williams, MIT License, see LICENSE.txt
 #Release Notes:
-# Fixed Tutorial World, so now you can actually play it.
+# Added Gold, Lava, and Iron Pickaxes.
+# Added Magma
+# Player can no longer fall out of the world.
+# Revamped Menu GUI.
+# Added "How to Craft" section in the crafting menu.
+# Added Save & Quit options inside the in-game menu.
+# Loading Screen and Saving Screen now shows please wait message.
+# In the Load World Screen, you can now open the most recently played world.
 
 class block(pygame.sprite.Sprite):
     def __init__(self, position, ID):
@@ -57,6 +68,12 @@ class block(pygame.sprite.Sprite):
             if not Toolbar[chosenBlock] == None:
                 if Toolbar[chosenBlock].image == 'Pickaxe.png' and random.randint(1, 10) > 5:
                     Toolbar[Toolbar.index(None)] = item(self.id, True, 2)
+                elif Toolbar[chosenBlock].image == 'Iron Pickaxe.png' and random.randint(1, 10) > 4:
+                    Toolbar[Toolbar.index(None)] = item(self.id, True, 3)
+                elif Toolbar[chosenBlock].image == 'Gold Pickaxe.png' and random.randint(1, 10) > 3:
+                    Toolbar[Toolbar.index(None)] = item(self.id, True, 4)
+                elif Toolbar[chosenBlock].image == 'Lava Pickaxe.png' and random.randint(1, 10) > 2.5:
+                    Toolbar[Toolbar.index(None)] = item(self.id, True, 5)
                 else:
                     Toolbar[Toolbar.index(None)] = item(self.id, True, 1)
             else:
@@ -342,6 +359,8 @@ class Player(pygame.sprite.Sprite):
         global playerMove, playerMoveX, playerWhere, world, cavePos, achievements
         if pygame.sprite.spritecollide(self, world, False):
             world.update('collide')
+        elif player.rect.bottom > 480 or player.rect.bottom == 481:
+            self.rect.bottom = 480   
         else:
             playerMove += 1
         self.rect.centerx += playerMoveX
@@ -352,7 +371,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect.centery = playerMove
         if action == "jump":
-            if pygame.sprite.spritecollide(self, world, False):
+            if pygame.sprite.spritecollide(self, world, False) or player.rect.bottom == 481:
                 for i in range(7):
                     playerMove -= 2
         if action == 'cavecheck':
@@ -393,6 +412,8 @@ class in_game_menu(pygame.sprite.Sprite):
         Achievements(125, 200)
         currenttext = MenuFont.render("Current World: "+name, 0, (0, 0, 0))
         window.blit(currenttext, [125, 345])
+        quitButton.display()
+        saveButton.display()
     def displayCraft(self):
         global window, Toolbar, craftClose, craftMenu, MouseTriggerZone, currentCraft, craftingRecipes
         window.blit(self.dimSurf, [0, 0])
@@ -405,7 +426,30 @@ class in_game_menu(pygame.sprite.Sprite):
         craftClose.display()
         craftButton.checkmouse()
         craftButton.display()
+        craft = craftingRecipes[currentCraft]
         window.blit(pygame.image.load(craftingRecipes[currentCraft].item.image), [215, 160])
+        window.blit(pygame.image.load(craft.item.image), [125, 200])
+        titleText = MenuFont.render("How to craft "+str(list(craft.item.image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+        window.blit(titleText, [140, 199])
+        window.blit(pygame.image.load(craft.parts[0].image), [125, 220])
+        Text = MenuFont.render(str(craft.parts[0].quantity)+" "+str(list(craft.parts[0].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+        window.blit(Text, [140, 219])
+        if len(craft.parts) == 2:
+           window.blit(pygame.image.load(craft.parts[1].image), [125, 240])
+           Text = MenuFont.render(str(craft.parts[1].quantity)+" "+str(list(craft.parts[1].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+           window.blit(Text, [140, 239])
+        if len(craft.parts) == 3:
+            window.blit(pygame.image.load(craft.parts[2].image), [125, 260])
+            Text = MenuFont.render(str(craft.parts[2].quantity)+" "+str(list(craft.parts[2].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+            window.blit(Text, [140, 259])
+        if len(craft.parts) == 4:
+            window.blit(pygame.image.load(craft.parts[3].image), [125, 280])
+            Text = MenuFont.render(str(craft.parts[3].quantity)+" "+str(list(craft.parts[3].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+            window.blit(Text, [140, 279])
+        if len(craft.parts) == 5:
+            window.blit(pygame.image.load(craft.parts[4].image), [125, 300])
+            Text = MenuFont.render(str(craft.parts[4].quantity)+" "+str(list(craft.parts[4].image.split(".png"))[0]).capitalize(), 0, (0, 0, 0))
+            window.blit(Text, [140, 299])
 
 class textbox(pygame.sprite.Sprite):
     def __init__(self, width):
@@ -570,16 +614,27 @@ def loading():
     pygame.display.flip()
 
 def menu():
-    global window, Logo
+    global window, Logo, screenshot, version
     background()
-    window.blit(Logo, [150, 60])
+    topbar = pygame.surface.Surface([480, 100])
+    topbar.fill([128, 128, 128])
+    window.blit(topbar, [0, 0])
+    window.blit(Logo, [20, 20])
     textFont = pygame.font.Font("PixelFJVerdana12pt.TTF", 15)
     textRender = textFont.render("Deeper", 1, (255, 255, 255))
-    window.blit(textRender, [225, 75])
+    smallTextFont = pygame.font.Font("PixelFJVerdana12pt.TTF", 10)
+    versionText = smallTextFont.render("Deeper "+version, 1, (255, 255, 255))
+    window.blit(textRender, [100, 35])
+    window.blit(versionText, [240, 325])
     menuButton.update(False)
     exitButton.update(False)
     helpButton.update(False)
     webButton.update(False)
+    window.blit(pygame.image.load('Pickaxe.png'), [10, 130])
+    window.blit(pygame.image.load('Lamp.png'), [10, 180])
+    window.blit(pygame.image.load('legacypc.png'), [10, 230])
+    window.blit(pygame.image.load('NoneBlock.png'), [10, 280])
+    window.blit(pygame.image.load(screenshot), [240, 0])
     window.blit(OrionDark7, [2, 440])
     pygame.display.flip()
 
@@ -648,16 +703,20 @@ def new_world():
     pygame.display.flip()
 
 def load_world():
+    global mostRecent
     background()
     titlefont = pygame.font.Font("PixelFJVerdana12pt.TTF", 20)
     title = titlefont.render("Load World", 0, (255, 255, 255))
     font = pygame.font.Font("PixelFJVerdana12pt.TTF", 10)
     worldName = font.render("World Name", 0, (255, 255, 255))
+    mrwText = font.render("Most Recent World: " + mostRecent, 0, (255, 255, 255))
+    window.blit(mrwText, [5, 450])
     window.blit(worldName, [50, 200])
     window.blit(title, [130, 10])
     worldbox.update([50, 225])
     goButton2.update(False)
     backButton.update(False)
+    loadRecentButton.update(False)
     pygame.display.flip()
 
 def display_world():
@@ -680,11 +739,17 @@ def generate_world(Basic):
     Coal = 0
     Iron = 0
     Gold = 0
+    Magma = 0
     Airspace = 0
     Crate = 0
     global player, players, playerSpawned, world, screen, achievements, cavePos, Toolbar, toolbarData, worldData, blocklighting
     cavePos.append(int(random.randint(1, 42)))
     playerSpawnX = random.randint(0, 47)
+    window.fill(THECOLORS['black'])
+    LoadingFont = pygame.font.Font("PixelFJVerdana12pt.ttf", 10)
+    LoadingRender = LoadingFont.render("Generating World, please wait...", 0, (255, 255, 255))
+    window.blit(LoadingRender, [10, 10])
+    pygame.display.flip()
     if Basic == 'load':
         for i in worldData:
             Block = i.transfer()
@@ -740,6 +805,9 @@ def generate_world(Basic):
                     Block.mined = True
                     Block.mine()
         window.fill(THECOLORS['black'])
+        LoadingFont = pygame.font.Font("PixelFJVerdana12pt.ttf", 10)
+        LoadingRender = LoadingFont.render("Generating World, please wait...", 0, (255, 255, 255))
+        window.blit(LoadingRender, [10, 10])
         pygame.display.flip()
     else:
         for c in range(4):
@@ -784,7 +852,7 @@ def generate_world(Basic):
                                 Id = 2
                             else:
                                 Id = 0
-                    elif y > 30:
+                    elif y > 30 and y < 38:
                         Iron = int(random.randint(1, 10))
                         Gold = int(random.randint(1, 10))
                         Coal = int(random.randint(1, 20))
@@ -798,6 +866,12 @@ def generate_world(Basic):
                                     Id = 2
                                 else:
                                     Id = 0
+                    elif y > 38:
+                        Magma = int(random.randint(1, 10))
+                        if Magma > 3:
+                            Id = 13
+                        else:
+                            Id = 0
                     else:
                         Coal = int(random.randint(1, 10))
                         if Coal == 10:
@@ -820,6 +894,9 @@ def generate_world(Basic):
                     Block.mined = True
                     Block.mine()
                 window.fill(THECOLORS['black'])
+                LoadingFont = pygame.font.Font("PixelFJVerdana12pt.ttf", 10)
+                LoadingRender = LoadingFont.render("Generating World, please wait...", 0, (255, 255, 255))
+                window.blit(LoadingRender, [10, 10])
                 pygame.display.flip()
     world.update('startcollide')
     screen = "in_game"
@@ -915,7 +992,7 @@ def Achievements(x, y):
     window.blit(achieve3, [x + 20, y + 50])
 
 pygame.init()
-version = "0.3.3"
+version = "0.4"
 window = pygame.display.set_mode([480, 480])
 pygame.display.set_caption("Deeper " + version)
 pygame.display.set_icon(pygame.image.load("DeeperIcon.jpg"))
@@ -928,14 +1005,19 @@ allBlocks = pygame.sprite.Group()
 lighting = pygame.sprite.Group()
 blocklighting = pygame.sprite.Group()
 mouseGrp.add(Mouse)
+font = pygame.font.Font("PixelFJVerdana12pt.TTF", 10)
+mrwText = font.render("Most Recent World: " + mostRecent, 0, (255, 255, 255))
+mrwRect = mrwText.get_rect()
 gamemenu = in_game_menu()
-webButton = button("Website", [400, 450], "gray", 0)
-menuButton = button("Start", [200, 200], "gray", -5)
-helpButton = button("Help", [202, 250], "gray", 0)
-exitButton = button("Exit", [205, 300], "red", -5)
+webButton = button("Website", [30, 225], "gray", 0)
+menuButton = button("Start", [30, 125], "gray", -5)
+helpButton = button("Help", [30, 175], "gray", 0)
+exitButton = button("Exit", [30, 275], "red", -5)
 backButton = button("Back", [15, 15], "red", 3)
 goButton = button("Go!", [15, 425], "green", 0)
 goButton2 = button("Go!", [380, 230], "green", 0)
+saveButton = button("Save Game", [130, 315], "green", 10)
+quitButton = button("Quit Game", [250, 315], "red", 0)
 nextTutorialButton = button("Next", [420, 445], "green", 0)
 doneTutorialButton = button("Done", [415, 445], "green", 5)
 basicButton = button("Basic World", [44, 275], "gray", -10)
@@ -946,6 +1028,7 @@ tutorialButton = button("Tutorial World", [44, 375], "gray", -20)
 buildXgenerate = button("Generate", [LegacyPC.rect.centerx + 10, LegacyPC.rect.centery + 150], "gray", 5)
 craftClose = button("X", [gamemenu.rect.centerx + 215, gamemenu.rect.centery + 10], "red", 4)
 craftButton = button("Craft", [160, 155], "gray", 15)
+loadRecentButton = button("Load", [mrwRect.width + 18, 450], "gray", 5)
 running = True
 GameMenu = False
 world_type = True
@@ -968,9 +1051,11 @@ key_repeat = False
 box = textbox(301)
 box.keys = 'new world'
 worldbox = textbox(301)
+name = None
+loadingRecent = False
 
 tutorial = ["Welcome to Deeper! Click Next to continue.", "Deeper is a game about exploring deeper, mining, and building.", "To start, try moving by pressing the A & D keys or arrow keys.", "See that? The little green guy moved! To make him jump, press the spacebar.", "Next, lets try mining. To mine a block, click it. It will be added to your inventory.", "To open your inventory, press E.", "When you are in your inventory, you can view your items, and achievements.", "In the top left corner are your items, to switch current items, just click it.", "You can also place blocks by clicking on any empty space.", "You can also interact wtih some blocks by right clicking them.", "That's about everything you need to know, you are about to exit the tutorial.", "If you have any questions, go to the help menu or contact @OrionDark7 on GitHub.", "Have fun!!!"]
-craftingRecipes = [craftingRecipe(item(10, True, 1), [item(9, True, 4), item(3, True, 5)]), craftingRecipe(item(9, True, 4), [item(2, True, 3), item(4, True, 3)]), craftingRecipe(item(6, True, 4), [item(5, True, 4)]), craftingRecipe(item(8, True, 4), [item(1, True, 4)])]
+craftingRecipes = [craftingRecipe(item(10, True, 1), [item(9, True, 4), item(3, True, 5)]), craftingRecipe(item(9, True, 4), [item(2, True, 3), item(4, True, 3)]), craftingRecipe(item(6, True, 4), [item(5, True, 4)]), craftingRecipe(item(8, True, 4), [item(1, True, 4)]), craftingRecipe(item(1, False, 1), [item(0, False, 1), item(3, True, 3)]), craftingRecipe(item(2, False, 1), [item(1, False, 1), item(4, True, 10)]), craftingRecipe(item(3, False, 1), [item(2, False, 1), item(13, True, 30)])]
 toolbarFile = open("toolbar.dat", "wb")
 mouseevent = 0
 blocksMined = 0
@@ -1020,7 +1105,6 @@ while running:
                     backButton.checkmouse()
                     backButton.click()
                     if loadButton.clicked:
-                        world_type = 'load'
                         loadButton.clicked = False
                         screen = "load_world"
                     elif newButton.clicked:
@@ -1062,12 +1146,25 @@ while running:
                     goButton2.click()
                     backButton.checkmouse()
                     backButton.click()
+                    loadRecentButton.checkmouse()
+                    loadRecentButton.click()
                     if goButton2.clicked:
+                        world_type = 'load'
                         if worldbox.keys+".deep" in worlds:
                             worldFile = open("./worlds/"+worldbox.keys+".deep", "rb")
                             worldData = pickle.load(worldFile)
                             worldFile.close()
                             goButton.clicked = False
+                            screen = 'generating'
+                    elif loadRecentButton.clicked:
+                        world_type = 'load'
+                        if mostRecent + ".deep" in worlds:
+                            name = mostRecent
+                            worldFile = open("./worlds/"+name+".deep", "rb")
+                            worldData = pickle.load(worldFile)
+                            worldFile.close()
+                            goButton.clicked = False
+                            loadingRecent = True
                             screen = 'generating'
                     elif backButton.clicked:
                         backButton.clicked = False
@@ -1110,6 +1207,27 @@ while running:
                                     elif j.image == craftingRecipes[currentCraft].item.image:
                                         j.quantity += craftingRecipes[currentCraft].item.quantity
                             craftButton.clicked = False
+                    elif GameMenu and not pcOn and not crafting:
+                        saveButton.checkmouse()
+                        saveButton.click()
+                        quitButton.checkmouse()
+                        quitButton.click()
+                        if saveButton.clicked:
+                            saveWorldFile = open("./worlds/"+name+".deep", "wb")
+                            worldDataNew = []
+                            window.fill(THECOLORS["black"])
+                            SavingFont = pygame.font.Font("PixelFJVerdana12pt.ttf", 10)
+                            SavingRender = SavingFont.render("Saving game, this may take a minute...", 0, (255, 255, 255))
+                            window.blit(SavingRender, [10, 10])
+                            pygame.display.flip()
+                            for i in allBlocks:
+                                worldDataNew.append(i.transfer())
+                                pickle.dump(worldDataNew, saveWorldFile)
+                                pickle.dump(Toolbar, toolbarFile)
+                            saveWorldFile.close()
+                            print 'World "'+name+'" saved succesfully.'
+                        if quitButton.clicked:
+                            running = False
                     elif not GameMenu and not pcOn:
                         if pygame.sprite.spritecollide(Mouse, world, False) and MouseTriggerZone(player.rect.centerx - 55, player.rect.centery - 55, player.rect.centerx + 55, player.rect.centery + 55):
                             world.update('mine')
@@ -1193,8 +1311,11 @@ while running:
     elif screen == 'generating':
         if not world_type == 'load':
             name = box.keys
-        else:
+        elif not loadingRecent:
             name = worldbox.keys
+        mostRecentWorld = open("recent.txt", "wb")
+        mostRecentWorld.write(name)
+        mostRecentWorld.close()
         Toolbar = toolbarOld
         generate_world(world_type)
         window.blit(pygame.image.load("cursor.png"), [Mouse.rect.centerx, Mouse.rect.centery])
@@ -1204,6 +1325,10 @@ while running:
             key_repeat = True
         display_world()
         lighting.update()
+        if player.rect.centery < 240:
+            toolbar(2, 462)
+        elif player.rect.centery >= 240:
+            toolbar(2, 2)
         if not world_type:
             player.update('cavecheck')
         else:
@@ -1230,6 +1355,9 @@ while running:
     clicked = False
 if screen == "in_game":
     saveWorldFile = open("./worlds/"+name+".deep", "wb")
+    mostRecentWorld = open("recent.txt", "wb")
+    mostRecentWorld.write(name)
+    mostRecentWorld.close()
     worldDataNew = []
     for i in allBlocks:
         worldDataNew.append(i.transfer())
@@ -1238,3 +1366,4 @@ if screen == "in_game":
     toolbarFile.close()
     saveWorldFile.close()
 pygame.quit()
+quit()
