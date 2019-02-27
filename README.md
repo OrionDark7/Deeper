@@ -8,6 +8,7 @@ You can download it from it's [GitHub Page](https://oriondark7.github.io/Deeper)
 * Python 2.x
 * Pygame 1.9.x
 
+### To run the [Windows Version](https://github.com/OrionDark7/DeeperForWindows)
 If you don't want to run the source code, you can always download the [Windows Version](https://github.com/OrionDark7/DeeperForWindows).
 The Windows Version of Deeper requires Windows XP or newer.
 
